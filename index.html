@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>YOUSSEF — Fashion Creative Director</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@200;300;400&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --black: #0A0A0A;
+      --white: #F4F1EC;
+      --red: #D63A2A;
+      --gray: #3A3A3A;
+      --mid: #888;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--black);
+      color: var(--white);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      overflow-x: hidden;
+      cursor: none;
+    }
+
+    /* ── CURSOR ── */
+    #cur {
+      width: 10px; height: 10px;
+      background: var(--red);
+      border-radius: 50%;
+      position: fixed; top: 0; left: 0;
+      pointer-events: none; z-index: 9999;
+      mix-blend-mode: difference;
+    }
+    #cur-ring {
+      width: 44px; height: 44px;
+      border: 1px solid var(--white);
+      border-radius: 50%;
+      position: fixed; top: 0; left: 0;
+      pointer-events: none; z-index: 9998;
+      transition: transform 0.25s, border-color 0.3s;
+      mix-blend-mode: difference;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 28px 48px;
+      border-bottom: 1px solid rgba(244,241,236,0.06);
+      background: rgba(10,10,10,0.85);
+      backdrop-filter: blur(12px);
+    }
+    .nav-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 28px; letter-spacing: 6px;
+      color: var(--white); text-decoration: none;
+    }
+    .nav-logo span { color: var(--red); }
+    .nav-links { display: flex; gap: 48px; list-style: none; }
+    .nav-links a {
+      font-size: 10px; letter-spacing: 4px; text-transform: uppercase;
+      color: var(--mid); text-decoration: none;
+      transition: color 0.25s;
+    }
+    .nav-links a:hover { color: var(--white); }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: flex; flex-direction: column; justify-content: flex-end;
+      padding: 0 48px 64px;
+      position: relative; overflow: hidden;
+    }
+    .hero-bg-text {
+      position: absolute; top: 50%; left: -0.02em;
+      transform: translateY(-50%);
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(160px, 22vw, 340px);
+      line-height: 0.85;
+      color: rgba(244,241,236,0.04);
+      white-space: nowrap; pointer-events: none;
+      user-select: none;
+    }
+    .hero-tag {
+      font-size: 10px; letter-spacing: 5px; text-transform: uppercase;
+      color: var(--red); margin-bottom: 20px;
+    }
+    .hero-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(80px, 13vw, 210px);
+      line-height: 0.88; letter-spacing: 2px;
+      position: relative; z-index: 2;
+    }
+    .hero-title .italic {
+      font-family: 'DM Serif Display', serif;
+      font-style: italic;
+      font-size: 0.65em;
+      letter-spacing: 0;
+      display: block; line-height: 1;
+    }
+    .hero-bottom {
+      display: flex; justify-content: space-between; align-items: flex-end;
+      margin-top: 48px; position: relative; z-index: 2;
+    }
+    .hero-desc {
+      max-width: 340px; font-size: 12px; line-height: 2.2;
+      color: var(--mid); letter-spacing: 0.5px;
+    }
+    .hero-desc strong { color: var(--white); font-weight: 400; }
+    .hero-cta {
+      display: flex; align-items: center; gap: 16px;
+      font-size: 10px; letter-spacing: 4px; text-transform: uppercase;
+      color: var(--white); text-decoration: none;
+      border: 1px solid rgba(244,241,236,0.2);
+      padding: 18px 36px;
+      transition: background 0.3s, border-color 0.3s;
+    }
+    .hero-cta:hover { background: var(--red); border-color: var(--red); }
+    .hero-num {
+      position: absolute; right: 0; bottom: 0;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 200px; line-height: 0.7;
+      color: rgba(214,58,42,0.07); pointer-events: none;
+    }
+    .hero-line {
+      position: absolute; left: 48px; top: 100px; bottom: 0;
+      width: 1px; background: rgba(244,241,236,0.06);
+    }
+
+    /* ── TICKER ── */
+    .ticker {
+      overflow: hidden; white-space: nowrap;
+      border-top: 1px solid rgba(244,241,236,0.08);
+      border-bottom: 1px solid rgba(244,241,236,0.08);
+      padding: 18px 0; background: var(--red);
+    }
+    .ticker-inner {
+      display: inline-flex; gap: 0;
+      animation: ticker 18s linear infinite;
+    }
+    .ticker-item {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 14px; letter-spacing: 6px;
+      color: var(--white); padding: 0 40px;
+    }
+    .ticker-dot { color: rgba(244,241,236,0.5); }
+    @keyframes ticker {
+      from { transform: translateX(0); }
+      to { transform: translateX(-50%); }
+    }
+
+    /* ── ABOUT ── */
+    .about {
+      display: grid; grid-template-columns: 1fr 1fr;
+      min-height: 90vh;
+    }
+    .about-left {
+      background: var(--white); color: var(--black);
+      padding: 100px 64px;
+      display: flex; flex-direction: column; justify-content: center;
+    }
+    .about-label {
+      font-size: 9px; letter-spacing: 5px; text-transform: uppercase;
+      color: var(--red); margin-bottom: 32px;
+    }
+    .about-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(52px, 6vw, 90px);
+      line-height: 0.9; margin-bottom: 48px;
+    }
+    .about-title em {
+      font-family: 'DM Serif Display', serif;
+      font-style: italic; font-size: 0.75em;
+      display: block;
+    }
+    .about-body {
+      font-size: 13px; line-height: 2.4; color: #444;
+      max-width: 380px; margin-bottom: 60px;
+    }
+    .about-stats {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 24px; border-top: 1px solid rgba(0,0,0,0.1);
+      padding-top: 40px;
+    }
+    .stat-n {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 52px; color: var(--black); line-height: 1;
+    }
+    .stat-l {
+      font-size: 8px; letter-spacing: 3px; text-transform: uppercase;
+      color: var(--red); margin-top: 6px;
+    }
+    .about-right {
+      background: var(--gray);
+      display: flex; align-items: center; justify-content: center;
+      position: relative; overflow: hidden;
+    }
+    .about-photo-placeholder {
+      width: 55%; aspect-ratio: 3/4;
+      background: rgba(244,241,236,0.06);
+      display: flex; align-items: center; justify-content: center;
+      border: 1px solid rgba(244,241,236,0.1);
+    }
+    .about-photo-placeholder span {
+      font-size: 9px; letter-spacing: 3px; color: var(--mid);
+    }
+    .about-right-label {
+      position: absolute; bottom: 32px; left: 32px;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 100px; color: rgba(244,241,236,0.04);
+      line-height: 1; pointer-events: none;
+    }
+
+    /* ── SERVICES ── */
+    .services { padding: 120px 48px; }
+    .services-header {
+      display: flex; justify-content: space-between; align-items: flex-end;
+      margin-bottom: 80px;
+      border-bottom: 1px solid rgba(244,241,236,0.08);
+      padding-bottom: 40px;
+    }
+    .sec-label {
+      font-size: 9px; letter-spacing: 5px; text-transform: uppercase;
+      color: var(--red); margin-bottom: 12px;
+    }
+    .sec-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(48px, 7vw, 100px);
+      line-height: 0.9;
+    }
+    .services-count {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 80px; color: rgba(244,241,236,0.08); line-height: 1;
+    }
+    .services-list { display: flex; flex-direction: column; gap: 0; }
+    .service-row {
+      display: grid; grid-template-columns: 80px 1fr auto;
+      align-items: center; gap: 40px;
+      padding: 36px 0;
+      border-bottom: 1px solid rgba(244,241,236,0.06);
+      transition: background 0.3s; cursor: none;
+      position: relative; overflow: hidden;
+    }
+    .service-row::after {
+      content: ''; position: absolute; left: 0; bottom: 0;
+      width: 0; height: 1px; background: var(--red);
+      transition: width 0.4s ease;
+    }
+    .service-row:hover::after { width: 100%; }
+    .service-row:hover .srv-name { color: var(--red); }
+    .srv-n {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 36px; color: rgba(244,241,236,0.15); line-height: 1;
+    }
+    .srv-name {
+      font-family: 'DM Serif Display', serif;
+      font-size: 28px; transition: color 0.3s;
+    }
+    .srv-tags {
+      display: flex; gap: 10px; flex-wrap: wrap; justify-content: flex-end;
+    }
+    .srv-tag {
+      font-size: 8px; letter-spacing: 3px; text-transform: uppercase;
+      border: 1px solid rgba(244,241,236,0.12); padding: 6px 14px;
+      color: var(--mid);
+    }
+
+    /* ── WORK ── */
+    .work { padding: 0 48px 120px; }
+    .work-header {
+      display: flex; justify-content: space-between; align-items: flex-end;
+      margin-bottom: 60px;
+      border-bottom: 1px solid rgba(244,241,236,0.08);
+      padding-bottom: 40px;
+    }
+    .work-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      grid-template-rows: auto auto;
+      gap: 16px;
+    }
+    .work-card {
+      position: relative; overflow: hidden;
+      background: var(--gray); cursor: none;
+    }
+    .work-card:first-child { grid-row: span 2; }
+    .work-thumb {
+      width: 100%; aspect-ratio: unset; height: 100%; min-height: 280px;
+      display: flex; align-items: center; justify-content: center;
+      position: relative;
+      transition: transform 0.6s ease;
+    }
+    .work-card:first-child .work-thumb { min-height: 580px; }
+    .work-card:hover .work-thumb { transform: scale(1.04); }
+    .work-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(10,10,10,0.85) 0%, transparent 50%);
+      display: flex; flex-direction: column; justify-content: flex-end;
+      padding: 32px;
+    }
+    .work-brand-name {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 32px; letter-spacing: 3px; line-height: 1;
+    }
+    .work-brand-type {
+      font-size: 9px; letter-spacing: 3px; text-transform: uppercase;
+      color: var(--red); margin-top: 4px;
+    }
+    .work-arrow {
+      position: absolute; top: 24px; right: 24px;
+      width: 36px; height: 36px;
+      border: 1px solid rgba(244,241,236,0.2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px;
+      opacity: 0; transform: translateY(4px);
+      transition: opacity 0.3s, transform 0.3s;
+    }
+    .work-card:hover .work-arrow { opacity: 1; transform: translateY(0); }
+
+    /* brand bg colors */
+    .bg-gelvi { background: linear-gradient(135deg, #2A2018 0%, #3D2E1A 100%); }
+    .bg-helper { background: linear-gradient(135deg, #1A2018 0%, #1E2A1E 100%); }
+    .bg-athar  { background: linear-gradient(135deg, #1E1810 0%, #2A200C 100%); }
+    .bg-elkhayrat { background: linear-gradient(135deg, #201A20 0%, #2E1A2E 100%); }
+    .bg-kids   { background: linear-gradient(135deg, #10161E 0%, #0C1420 100%); }
+    .bg-open   { background: repeating-linear-gradient(
+      45deg, #111 0px, #111 20px, #131313 20px, #131313 40px
+    ); }
+
+    /* ── LOOKBOOKS ── */
+    .lookbooks { padding: 120px 48px; background: var(--white); color: var(--black); }
+    .lookbooks .sec-label { color: var(--red); }
+    .lookbooks .sec-title { color: var(--black); }
+    .lb-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
+      margin-top: 60px;
+    }
+    .lb-card {
+      position: relative; overflow: hidden; cursor: none;
+    }
+    .lb-thumb {
+      aspect-ratio: 2/3;
+      transition: transform 0.5s;
+    }
+    .lb-card:hover .lb-thumb { transform: scale(1.05); }
+    .lb-info {
+      padding: 16px 0;
+    }
+    .lb-season {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 20px; letter-spacing: 2px;
+    }
+    .lb-brand-tag {
+      font-size: 8px; letter-spacing: 3px; text-transform: uppercase;
+      color: var(--red); margin-top: 2px;
+    }
+    .lb-1 { background: #EDE4D8; }
+    .lb-2 { background: #D8E0DA; }
+    .lb-3 { background: #E0D8E4; }
+    .lb-4 { background: #E8E0D0; }
+
+    /* ── PROCESS ── */
+    .process { padding: 120px 48px; }
+    .process-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px;
+      margin-top: 80px;
+    }
+    .process-cell {
+      padding: 60px 40px;
+      border: 1px solid rgba(244,241,236,0.06);
+      position: relative;
+      transition: border-color 0.3s;
+    }
+    .process-cell:hover { border-color: rgba(214,58,42,0.4); }
+    .pc-n {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 80px; color: rgba(214,58,42,0.12); line-height: 1;
+      margin-bottom: 24px;
+    }
+    .pc-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 22px; margin-bottom: 16px;
+    }
+    .pc-desc {
+      font-size: 11px; line-height: 2.2; color: var(--mid);
+    }
+
+    /* ── CONTACT ── */
+    .contact {
+      min-height: 80vh;
+      display: flex; flex-direction: column; justify-content: center;
+      padding: 120px 48px;
+      position: relative; overflow: hidden;
+      border-top: 1px solid rgba(244,241,236,0.06);
+    }
+    .contact-bg {
+      position: absolute; left: -0.02em; top: 50%;
+      transform: translateY(-50%);
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(120px, 18vw, 280px);
+      color: rgba(214,58,42,0.04); white-space: nowrap;
+      pointer-events: none; user-select: none;
+    }
+    .contact-label { color: var(--red); font-size: 9px; letter-spacing: 5px; text-transform: uppercase; margin-bottom: 24px; }
+    .contact-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(64px, 10vw, 160px);
+      line-height: 0.88; margin-bottom: 64px; position: relative; z-index: 2;
+    }
+    .contact-title em {
+      font-family: 'DM Serif Display', serif;
+      font-style: italic; font-size: 0.55em;
+      display: block; line-height: 1.1; color: var(--mid);
+    }
+    .contact-row {
+      display: flex; gap: 40px; align-items: center;
+      flex-wrap: wrap; position: relative; z-index: 2;
+    }
+    .contact-email {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(24px, 3vw, 48px); letter-spacing: 2px;
+      color: var(--white); text-decoration: none;
+      border-bottom: 2px solid var(--red); padding-bottom: 4px;
+      transition: color 0.3s;
+    }
+    .contact-email:hover { color: var(--red); }
+    .contact-socials { display: flex; gap: 24px; list-style: none; }
+    .contact-socials a {
+      font-size: 9px; letter-spacing: 4px; text-transform: uppercase;
+      color: var(--mid); text-decoration: none;
+      border: 1px solid rgba(244,241,236,0.1); padding: 14px 24px;
+      transition: border-color 0.3s, color 0.3s;
+    }
+    .contact-socials a:hover { border-color: var(--red); color: var(--white); }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid rgba(244,241,236,0.06);
+      padding: 32px 48px;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    footer span { font-size: 10px; letter-spacing: 2px; color: rgba(244,241,236,0.18); }
+
+    /* ── FADE IN ── */
+    .reveal {
+      opacity: 0; transform: translateY(28px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* ── RESPONSIVE ── */
+    @media(max-width: 900px){
+      nav { padding: 20px 24px; }
+      .nav-links { display: none; }
+      .hero { padding: 0 24px 48px; }
+      .about { grid-template-columns: 1fr; }
+      .about-right { min-height: 50vh; }
+      .services, .work, .lookbooks, .process, .contact { padding: 80px 24px; }
+      .work-grid { grid-template-columns: 1fr 1fr; }
+      .work-card:first-child { grid-column: span 2; grid-row: auto; }
+      .process-grid, .lb-grid { grid-template-columns: 1fr 1fr; }
+      .service-row { grid-template-columns: 60px 1fr; }
+      .srv-tags { display: none; }
+      footer { padding: 24px; flex-direction: column; gap: 8px; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="cur"></div>
+<div id="cur-ring"></div>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="#">YOU<span>.</span>SSEF</a>
+  <ul class="nav-links">
+    <li><a href="#work">Work</a></li>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#lookbooks">Lookbooks</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="hero-line"></div>
+  <div class="hero-bg-text" aria-hidden="true">VISUAL<br>IDENTITY</div>
+  <p class="hero-tag">Fashion Creative Director · Egypt</p>
+  <h1 class="hero-title">
+    DESIGN<br>
+    <span class="italic">& Photography</span><br>
+    THAT SELLS
+  </h1>
+  <div class="hero-bottom">
+    <p class="hero-desc">
+      <strong>Fashion design, AI-powered imagery,</strong> and visual identity for clothing brands — from concept to catalog. Based in Egypt, working globally.
+    </p>
+    <a href="#work" class="hero-cta">See The Work →</a>
+  </div>
+  <div class="hero-num" aria-hidden="true">Y</div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker" aria-hidden="true">
+  <div class="ticker-inner">
+    <span class="ticker-item">FASHION DESIGN</span><span class="ticker-item ticker-dot">✦</span>
+    <span class="ticker-item">AI PHOTOGRAPHY</span><span class="ticker-item ticker-dot">✦</span>
+    <span class="ticker-item">VISUAL IDENTITY</span><span class="ticker-item ticker-dot">✦</span>
+    <span class="ticker-item">LOOKBOOKS</span><span class="ticker-item ticker-dot">✦</span>
+    <span class="ticker-item">E-COMMERCE CATALOGS</span><span class="ticker-item ticker-dot">✦</span>
+    <span class="ticker-item">BRAND DIRECTION</span><span class="ticker-item ticker-dot">✦</span>
+    <span class="ticker-item">FASHION DESIGN</span><span class="ticker-item ticker-dot">✦</span>
+    <span class="ticker-item">AI PHOTOGRAPHY</span><span class="ticker-item ticker-dot">✦</span>
+    <span class="ticker-item">VISUAL IDENTITY</span><span class="ticker-item ticker-dot">✦</span>
+    <span class="ticker-item">LOOKBOOKS</span><span class="ticker-item ticker-dot">✦</span>
+    <span class="ticker-item">E-COMMERCE CATALOGS</span><span class="ticker-item ticker-dot">✦</span>
+    <span class="ticker-item">BRAND DIRECTION</span><span class="ticker-item ticker-dot">✦</span>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<section class="about" id="about">
+  <div class="about-left">
+    <p class="about-label">About Me</p>
+    <h2 class="about-title">THE MAN<br><em>Behind the lens</em></h2>
+    <p class="about-body">
+      Fashion creative based in Egypt specializing in design, photography, and AI-powered visual identity. I build the complete visual world for clothing brands — from first concept sketch to the final pixel in the catalog. My clients get luxury editorial aesthetics that actually convert.
+    </p>
+    <div class="about-stats">
+      <div>
+        <div class="stat-n">5+</div>
+        <div class="stat-l">Brands</div>
+      </div>
+      <div>
+        <div class="stat-n">3</div>
+        <div class="stat-l">Disciplines</div>
+      </div>
+      <div>
+        <div class="stat-n">EG</div>
+        <div class="stat-l">Based</div>
+      </div>
+    </div>
+  </div>
+  <div class="about-right">
+    <div class="about-photo-placeholder"><span>YOUR PHOTO</span></div>
+    <div class="about-right-label" aria-hidden="true">Y</div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section class="services" id="services">
+  <div class="services-header reveal">
+    <div>
+      <p class="sec-label">What I Offer</p>
+      <h2 class="sec-title">SERVICES</h2>
+    </div>
+    <div class="services-count" aria-hidden="true">06</div>
+  </div>
+  <div class="services-list">
+    <div class="service-row reveal">
+      <div class="srv-n">01</div>
+      <div class="srv-name">Visual Identity & Branding</div>
+      <div class="srv-tags">
+        <span class="srv-tag">Logo</span>
+        <span class="srv-tag">Brand System</span>
+        <span class="srv-tag">Guidelines</span>
+      </div>
+    </div>
+    <div class="service-row reveal">
+      <div class="srv-n">02</div>
+      <div class="srv-name">Fashion Photography</div>
+      <div class="srv-tags">
+        <span class="srv-tag">Editorial</span>
+        <span class="srv-tag">White BG</span>
+        <span class="srv-tag">Catalog</span>
+      </div>
+    </div>
+    <div class="service-row reveal">
+      <div class="srv-n">03</div>
+      <div class="srv-name">AI-Powered Model Imagery</div>
+      <div class="srv-tags">
+        <span class="srv-tag">E-Commerce</span>
+        <span class="srv-tag">Higgsfield</span>
+        <span class="srv-tag">Kling</span>
+      </div>
+    </div>
+    <div class="service-row reveal">
+      <div class="srv-n">04</div>
+      <div class="srv-name">Lookbooks & Catalogs</div>
+      <div class="srv-tags">
+        <span class="srv-tag">Design</span>
+        <span class="srv-tag">Art Direction</span>
+        <span class="srv-tag">Print Ready</span>
+      </div>
+    </div>
+    <div class="service-row reveal">
+      <div class="srv-n">05</div>
+      <div class="srv-name">Social Content Systems</div>
+      <div class="srv-tags">
+        <span class="srv-tag">Instagram</span>
+        <span class="srv-tag">Reels</span>
+        <span class="srv-tag">Feed Strategy</span>
+      </div>
+    </div>
+    <div class="service-row reveal">
+      <div class="srv-n">06</div>
+      <div class="srv-name">Campaign Direction</div>
+      <div class="srv-tags">
+        <span class="srv-tag">Concept</span>
+        <span class="srv-tag">Styling</span>
+        <span class="srv-tag">Video</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WORK -->
+<section class="work" id="work">
+  <div class="work-header reveal">
+    <div>
+      <p class="sec-label">Selected Projects</p>
+      <h2 class="sec-title">WORK</h2>
+    </div>
+  </div>
+  <div class="work-grid">
+    <div class="work-card reveal">
+      <div class="work-thumb bg-gelvi">
+        <div class="work-overlay">
+          <div class="work-brand-name">GELVI</div>
+          <div class="work-brand-type">Luxury Women's · Visual Identity</div>
+        </div>
+        <div class="work-arrow">↗</div>
+      </div>
+    </div>
+    <div class="work-card reveal">
+      <div class="work-thumb bg-helper">
+        <div class="work-overlay">
+          <div class="work-brand-name">HELPER</div>
+          <div class="work-brand-type">Men's Clothing · Identity</div>
+        </div>
+        <div class="work-arrow">↗</div>
+      </div>
+    </div>
+    <div class="work-card reveal">
+      <div class="work-thumb bg-athar">
+        <div class="work-overlay">
+          <div class="work-brand-name">ATHAR SCENTS</div>
+          <div class="work-brand-type">Fragrance · Campaign</div>
+        </div>
+        <div class="work-arrow">↗</div>
+      </div>
+    </div>
+    <div class="work-card reveal">
+      <div class="work-thumb bg-elkhayrat">
+        <div class="work-overlay">
+          <div class="work-brand-name">ELKHAYRAT ROSE</div>
+          <div class="work-brand-type">Editorial · Lookbook</div>
+        </div>
+        <div class="work-arrow">↗</div>
+      </div>
+    </div>
+    <div class="work-card reveal">
+      <div class="work-thumb bg-open" style="min-height:280px; display:flex; align-items:center; justify-content:center;">
+        <div style="text-align:center; z-index:2; position:relative;">
+          <div style="font-family:'Bebas Neue',sans-serif; font-size:20px; letter-spacing:4px; color:rgba(244,241,236,0.3);">YOUR BRAND</div>
+          <div style="font-size:9px; letter-spacing:3px; color:var(--red); margin-top:8px;">AVAILABLE</div>
+        </div>
+        <div class="work-arrow" style="opacity:1; color:var(--red);">+</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LOOKBOOKS -->
+<section class="lookbooks" id="lookbooks">
+  <p class="sec-label">Editorial Work</p>
+  <h2 class="sec-title">LOOKBOOKS<br><span style="font-family:'DM Serif Display',serif; font-style:italic; font-size:0.6em; color:#888">&amp; Catalogs</span></h2>
+  <div class="lb-grid reveal">
+    <div class="lb-card">
+      <div class="lb-thumb lb-1"></div>
+      <div class="lb-info">
+        <div class="lb-season">GELVI SS '25</div>
+        <div class="lb-brand-tag">Women's Lookbook</div>
+      </div>
+    </div>
+    <div class="lb-card">
+      <div class="lb-thumb lb-2"></div>
+      <div class="lb-info">
+        <div class="lb-season">ELKHAYRAT</div>
+        <div class="lb-brand-tag">Hi-Lo Editorial</div>
+      </div>
+    </div>
+    <div class="lb-card">
+      <div class="lb-thumb lb-3"></div>
+      <div class="lb-info">
+        <div class="lb-season">KIDS CATALOG</div>
+        <div class="lb-brand-tag">AI Photography</div>
+      </div>
+    </div>
+    <div class="lb-card">
+      <div class="lb-thumb lb-4"></div>
+      <div class="lb-info">
+        <div class="lb-season">HELPER FW '25</div>
+        <div class="lb-brand-tag">Men's Catalog</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section class="process">
+  <div class="reveal">
+    <p class="sec-label">How I Work</p>
+    <h2 class="sec-title">THE PROCESS</h2>
+  </div>
+  <div class="process-grid">
+    <div class="process-cell reveal">
+      <div class="pc-n">01</div>
+      <div class="pc-title">Brief & Discovery</div>
+      <p class="pc-desc">Understanding your brand, target audience, and visual ambition. What should this brand feel like?</p>
+    </div>
+    <div class="process-cell reveal">
+      <div class="pc-n">02</div>
+      <div class="pc-title">Creative Direction</div>
+      <p class="pc-desc">Mood boards, color systems, references. Building the complete aesthetic blueprint before a single shot is taken.</p>
+    </div>
+    <div class="process-cell reveal">
+      <div class="pc-n">03</div>
+      <div class="pc-title">Production</div>
+      <p class="pc-desc">Photography, AI imagery, design — executed with precision. Every detail considered. No shortcuts.</p>
+    </div>
+    <div class="process-cell reveal">
+      <div class="pc-n">04</div>
+      <div class="pc-title">Delivery</div>
+      <p class="pc-desc">Final assets, brand guidelines, all formats — ready to deploy across every channel, print and digital.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact" id="contact">
+  <div class="contact-bg" aria-hidden="true">LET'S TALK</div>
+  <p class="contact-label">Get In Touch</p>
+  <h2 class="contact-title reveal">
+    START A<br>
+    <em>Project Together</em>
+  </h2>
+  <div class="contact-row reveal">
+    <a class="contact-email" href="mailto:hello@youssef.com">hello@youssef.com</a>
+    <ul class="contact-socials">
+      <li><a href="#">Instagram</a></li>
+      <li><a href="#">Behance</a></li>
+      <li><a href="#">LinkedIn</a></li>
+    </ul>
+  </div>
+</section>
+
+<footer>
+  <span>© 2026 Youssef. All Rights Reserved.</span>
+  <span>Fashion · Design · Photography · AI Imagery</span>
+</footer>
+
+<script>
+  // Cursor
+  const cur = document.getElementById('cur');
+  const ring = document.getElementById('cur-ring');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    cur.style.left = (mx - 5) + 'px';
+    cur.style.top  = (my - 5) + 'px';
+  });
+  (function loop() {
+    rx += (mx - rx - 22) * 0.1;
+    ry += (my - ry - 22) * 0.1;
+    ring.style.left = rx + 'px';
+    ring.style.top  = ry + 'px';
+    requestAnimationFrame(loop);
+  })();
+  document.querySelectorAll('a, .service-row, .work-card, .lb-card, .process-cell').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      cur.style.transform = 'scale(2.5)';
+      ring.style.transform = 'scale(1.8)';
+      ring.style.borderColor = 'rgba(214,58,42,0.8)';
+    });
+    el.addEventListener('mouseleave', () => {
+      cur.style.transform = '';
+      ring.style.transform = '';
+      ring.style.borderColor = '';
+    });
+  });
+
+  // Scroll reveal
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        e.target.style.transitionDelay = (i * 0.07) + 's';
+        e.target.classList.add('visible');
+        obs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+</script>
+</body>
+</html>
